@@ -3,10 +3,12 @@
 Simple connected control system for domestic microgreen environmental control using free software and open source hardware.
 
 Software:
+    
     Connection: WiFi
     Protocol: MQTT
 
 Hardware:
+    
     MCU: NodeMCU V1.0
     Board CAD: Eagle
     Controller interface: Python
