@@ -1,4 +1,4 @@
-# Microgreen_WiFi_Controller
+# Microgreen WiFi Controller
 
 next steps:
 
