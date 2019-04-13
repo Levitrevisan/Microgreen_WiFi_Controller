@@ -4,6 +4,8 @@
 
 ### - Create MQTT broker on AWS
 
+https://medium.com/@achildrenmile/mqtt-broker-on-aws-ec2-hands-on-install-configure-test-out-f12dd2f5c9d0
+
 ### - Create MQTT mananger in Python on AWS: 
 
 http://www.steves-internet-guide.com/python-mqtt-publish-subscribe/
