@@ -1,5 +1,16 @@
 # Microgreen WiFi Controller
 
+Simple connected control system for domestic microgreen environmental control using free software and open source hardware.
+
+Software:
+Connection: WiFi
+Protocol: MQTT
+
+Hardware:
+MCU: NodeMCU V1.0
+Board CAD: Eagle
+Controller interface: Python
+
 ## Next steps:
 
 ### - Create MQTT broker on AWS
@@ -18,3 +29,9 @@ This simple mananger should be able just to start, connect to broker, send comma
 https://www.filipeflop.com/blog/controle-monitoramento-iot-nodemcu-e-mqtt/
 
 This code should just stay connected to broker, subscribe to some channels, interpret and execute received commands. 
+
+## Ideas/Future Implementation:
+
+### - Telegram bot as interface
+### - API as interface
+### - Online database to store sensing data 
