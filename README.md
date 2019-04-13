@@ -6,12 +6,12 @@ Software:
     
     Connection: WiFi
     Protocol: MQTT
+    Controller interface: Python
 
 Hardware:
     
     MCU: NodeMCU V1.0
     Board CAD: Eagle
-    Controller interface: Python
 
 ## Next steps:
 
