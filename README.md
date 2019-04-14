@@ -28,11 +28,10 @@ Install dependencies:
     whereis gcc // to check if gcc is avaiable
     sudo yum install git //to be able to copy libwebsockets repository
     git clone https://github.com/warmcat/libwebsockets.git
-    //sudo apt-get install libssl-dev
+    sudo yum install -y openssl-devel
     cd libwebsockets
     mkdir build
     cd build
-    -- stoped here
     cmake .. -DCMAKE_C_COMPILER=/usr/bin/gcc
     make
     sudo make install
@@ -50,6 +49,7 @@ Add the repository:
 
 Installing:
 
+    -- stoped here (error: can't find libwebsocket)
     sudo yum install mosquitto mosquitto-clients
 
 #### Configuring Mosquitto:
