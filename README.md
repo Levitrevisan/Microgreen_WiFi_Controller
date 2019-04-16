@@ -15,6 +15,10 @@ Hardware:
 
 ## Next steps:
 
+### - Use MQTT free online service
+    
+    https://www.cloudmqtt.com/
+
 ### - Create MQTT broker on AWS
 
 https://medium.com/@achildrenmile/mqtt-broker-on-aws-ec2-hands-on-install-configure-test-out-f12dd2f5c9d0
