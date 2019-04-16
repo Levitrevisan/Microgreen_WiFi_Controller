@@ -19,48 +19,6 @@ Hardware:
     
     https://www.cloudmqtt.com/
 
-### - Create MQTT broker on AWS
-
-https://medium.com/@achildrenmile/mqtt-broker-on-aws-ec2-hands-on-install-configure-test-out-f12dd2f5c9d0
-
-#### Installing mosquitto on ec2 machine:
-
-Install dependencies:
-
-    sudo yum group install "Development Tools" //to be able to run cmake
-    sudo yum install cmake // to be able to compile libwebsockets    
-    whereis gcc // to check if gcc is avaiable
-    sudo yum install git //to be able to copy libwebsockets repository
-    git clone https://github.com/warmcat/libwebsockets.git
-    sudo yum install -y openssl-devel
-    cd libwebsockets
-    mkdir build
-    cd build
-    cmake .. -DCMAKE_C_COMPILER=/usr/bin/gcc
-    make
-    sudo make install
-    ldconfig
-
-links:
-https://www.cyberciti.biz/faq/centos-rhel-7-redhat-linux-install-gcc-compiler-development-tools/
-https://stackoverflow.com/questions/15051347/how-do-i-correctly-set-a-cmakelists-txt-file
-http://blog.yatis.io/install-secure-robust-mosquitto-mqtt-broker-aws-ubuntu/
-https://github.com/eclipse/mosquitto/issues/699
-
-Add the repository:
-
-    sudo wget http://download.opensuse.org/repositories/home:/oojah:/mqtt/CentOS_CentOS-7/home:oojah:mqtt.repo -O /etc/yum.repos.d/mqtt.repo
-
-Installing:
-
-    -- stoped here (error: can't find libwebsocket)
-    sudo yum install mosquitto mosquitto-clients
-
-#### Configuring Mosquitto:
-
-    sudo nano /etc/mosquitto/mosquitto.conf
-
-
 ### - Create MQTT mananger in Python on AWS: 
 
 http://www.steves-internet-guide.com/python-mqtt-publish-subscribe/
