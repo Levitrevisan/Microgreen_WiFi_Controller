@@ -29,6 +29,8 @@ This simple mananger should be able just to start, connect to broker, send comma
 ### - Add MQTT connection to NodeMCU directed to Broker: 
 
 https://www.filipeflop.com/blog/controle-monitoramento-iot-nodemcu-e-mqtt/
+https://techtutorialsx.com/2017/04/09/esp8266-connecting-to-mqtt-broker/   < MQTT User and Password
+https://github.com/ItKindaWorks/ESP8266/issues/9   < Nice example using NodeMCU MAC to name device, also using MQTT Username and Password
 
 This code should just stay connected to broker, subscribe to some channels, interpret and execute received commands. 
 
