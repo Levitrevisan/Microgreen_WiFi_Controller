@@ -1,19 +1,21 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
-#include <WiFiClient.h>
+//#include <WiFiClient.h>
 #include <PubSubClient.h> // Importa a Biblioteca PubSubClient
+#include <DS1307.h>
 
 //MQTT definitions
 #define TOPICO_SUBSCRIBE "ledStatus"   //listen channel
 #define TOPICO_PUBLISH "controllerLog" //sender channel
 #define ID_MQTT "controller1"
 const char *BROKER_MQTT = "m16.cloudmqtt.com"; //URL of MQTT broker
-int BROKER_PORT = 10746;                        //MQTT Broker port
+int BROKER_PORT = 10746;                       //MQTT Broker port
 
 //Global Objects and variables
 WiFiClient espClient;         // create espClient object
 PubSubClient MQTT(espClient); // create MQTT client object
 char outputState = '0';       //stores current output state (could be changed to boolean)
+DS1307 rtc(D1, D2);
 
 //WiFi constants
 const char *ssid = "ImWatchingYou";
@@ -23,10 +25,15 @@ const char *password = "99194213";
 const char *mqtt_username = "paiqlirh";
 const char *mqtt_password = "V4ig-DwmZsCA";
 
+// Debug Variables
+bool blinkOrNot = true;
+
 //Prototypes
 void initMQTT();
 void initWiFi();
+void initRTC();
 void logMQTT();
+
 void mqtt_callback(char *topic, byte *payload, unsigned int length);
 
 void setup()
@@ -35,6 +42,8 @@ void setup()
   Serial.begin(9600);
   // Start IO ports
   pinMode(LED_BUILTIN, OUTPUT);
+  // Start RTC Module
+  initRTC();
   //configure WiFi Connection
   initWiFi();
   //Configure MQTT
@@ -43,7 +52,10 @@ void setup()
 
 void loop()
 {
-  digitalWrite(LED_BUILTIN, HIGH);
+  if (blinkOrNot)
+  {
+    digitalWrite(LED_BUILTIN, HIGH);
+  }
   delay(1000);
   logMQTT();
   digitalWrite(LED_BUILTIN, LOW);
@@ -105,27 +117,49 @@ void mqtt_callback(char *topic, byte *payload, unsigned int length)
 {
   String msg;
 
-  //obtem a string do payload recebido
   for (int i = 0; i < length; i++)
   {
     char c = (char)payload[i];
     msg += c;
   }
 
-  //toma ação dependendo da string recebida:
-  //verifica se deve colocar nivel alto de tensão na saída D0:
+  Serial.println("");
+  Serial.print("[ OK ] Message received: ");
+  Serial.print(msg);
+  Serial.println("");
+
   //IMPORTANTE: o Led já contido na placa é acionado com lógica invertida (ou seja,
   //enviar HIGH para o output faz o Led apagar / enviar LOW faz o Led acender)
   if (msg.equals("L"))
   {
-    digitalWrite(LED_BUILTIN, LOW);
+    blinkOrNot = true;
     delay(5000);
   }
 
-  //verifica se deve colocar nivel alto de tensão na saída D0:
   if (msg.equals("D"))
   {
-    digitalWrite(LED_BUILTIN, HIGH);
+    blinkOrNot = false;
     delay(5000);
   }
 }
+
+void initRTC()
+{
+  rtc.halt(false);
+  rtc.setDOW(FRIDAY);
+  rtc.setTime(10, 40, 0);
+  rtc.setDate(17, 04, 2019);
+  //Definitions of SQW/Out pin
+  rtc.setSQWRate(SQW_RATE_1);
+  rtc.enableSQW(true);
+
+  if (strcmp(rtc.getDOWStr(), "xxxxxxxxx") == 0)
+  {
+    Serial.print("[FAIL] RTC is not working, check");
+  }
+  else
+  {
+    Serial.print("[ OK ] RTC working");
+  }
+}
+
