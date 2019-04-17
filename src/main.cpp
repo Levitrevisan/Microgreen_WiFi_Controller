@@ -7,7 +7,7 @@
 #define TOPICO_PUBLISH "controllerLog" //sender channel
 #define ID_MQTT "controller1"
 const char *BROKER_MQTT = "	m16.cloudmqtt.com"; //URL of MQTT broker
-int BROKER_PORT = 10746;                        //MQTT Broker port"
+int BROKER_PORT = 10746;                        //MQTT Broker port
 
 //Global Objects and variables
 WiFiClient espClient;         // create espClient object
@@ -17,6 +17,10 @@ char outputState = '0';       //stores current output state (could be changed to
 //WiFi constants
 const char *ssid = "ImWatchingYou";
 const char *password = "99194213";
+
+//MQTT constants
+const char *mqtt_username = "paiqlirh";
+const char *mqtt_password = "V4ig-DwmZsCA";
 
 //Prototypes
 void initMQTT();
@@ -49,25 +53,41 @@ void loop()
 void initWiFi()
 {
   Serial.println("");
-  Serial.print("Trying to connect to: ");
+  Serial.print("       Trying to connect to: ");
   Serial.println(ssid);
+  WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
+
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
     Serial.print(".");
   }
   Serial.println("");
-  Serial.print("Connected with ip: ");
+  Serial.print("[ OK ] Connected with ip: ");
   Serial.print(WiFi.localIP());
   Serial.println("");
 }
 
 void initMQTT()
 {
-  MQTT.setServer(BROKER_MQTT, BROKER_PORT); //informa qual broker e porta deve ser conectado
+  MQTT.setServer(BROKER_MQTT, 1883); //informa qual broker e porta deve ser conectado
   MQTT.setCallback(mqtt_callback);          //atribui função de callback (função chamada quando qualquer informação de um dos tópicos subescritos chega)
-  MQTT.connect()
+  while (!MQTT.connected())
+  {
+    if (MQTT.connect(ID_MQTT, mqtt_username, mqtt_password))
+    {
+      Serial.println("[ OK ] MQTT conection stabilished");
+    }
+    else
+    {
+      Serial.print("");
+      Serial.print("[FAIL] MQTT connection error : ");
+      Serial.print(MQTT.state());
+      Serial.println("");
+      delay(2000);
+    }
+  }
 }
 
 void logMQTT()

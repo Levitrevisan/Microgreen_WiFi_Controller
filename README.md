@@ -39,5 +39,8 @@ This code should just stay connected to broker, subscribe to some channels, inte
 ### - Telegram bot as interface
 ### - API as interface
 ### - Online database to store sensing data 
+### - Real Time Clock
+    https://www.filipeflop.com/blog/relogio-rtc-ds1307-arduino/
+    - Works with 5V I2C
 
 https://www.w3schools.com/python/python_mysql_getstarted.asp
