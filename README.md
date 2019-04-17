@@ -13,11 +13,16 @@ Hardware:
     MCU: NodeMCU V1.0
     Board CAD: Eagle
 
-## Next steps:
-
 ### - Use MQTT free online service
     
     https://www.cloudmqtt.com/
+
+## Next steps:
+
+### - Read RTC data
+
+    https://www.filipeflop.com/blog/relogio-rtc-ds1307-arduino/
+    - Works with 5V I2C
 
 ### - Create MQTT mananger in Python on AWS: 
 
@@ -40,7 +45,6 @@ This code should just stay connected to broker, subscribe to some channels, inte
 ### - API as interface
 ### - Online database to store sensing data 
 ### - Real Time Clock
-    https://www.filipeflop.com/blog/relogio-rtc-ds1307-arduino/
-    - Works with 5V I2C
+
 
 https://www.w3schools.com/python/python_mysql_getstarted.asp
