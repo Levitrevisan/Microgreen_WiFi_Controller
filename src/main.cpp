@@ -1,12 +1,13 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
+#include <WiFiClient.h>
 #include <PubSubClient.h> // Importa a Biblioteca PubSubClient
 
 //MQTT definitions
 #define TOPICO_SUBSCRIBE "ledStatus"   //listen channel
 #define TOPICO_PUBLISH "controllerLog" //sender channel
 #define ID_MQTT "controller1"
-const char *BROKER_MQTT = "	m16.cloudmqtt.com"; //URL of MQTT broker
+const char *BROKER_MQTT = "m16.cloudmqtt.com"; //URL of MQTT broker
 int BROKER_PORT = 10746;                        //MQTT Broker port
 
 //Global Objects and variables
@@ -71,13 +72,13 @@ void initWiFi()
 
 void initMQTT()
 {
-  MQTT.setServer(BROKER_MQTT, 1883); //informa qual broker e porta deve ser conectado
+  MQTT.setServer(BROKER_MQTT, BROKER_PORT); //informa qual broker e porta deve ser conectado
   MQTT.setCallback(mqtt_callback);          //atribui função de callback (função chamada quando qualquer informação de um dos tópicos subescritos chega)
   while (!MQTT.connected())
   {
     if (MQTT.connect(ID_MQTT, mqtt_username, mqtt_password))
     {
-      Serial.println("[ OK ] MQTT conection stabilished");
+      Serial.println("[ OK ] MQTT conection estabilished");
     }
     else
     {
