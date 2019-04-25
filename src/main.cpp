@@ -1,11 +1,10 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
-//#include <WiFiClient.h>
 #include <PubSubClient.h> // Importa a Biblioteca PubSubClient
 #include <DS1307.h>
 
 //MQTT definitions
-#define TOPICO_SUBSCRIBE "ledStatus"   //listen channel
+#define TOPIC_SUBSCRIBE "ledStatus"    //listen channel
 #define TOPICO_PUBLISH "controllerLog" //sender channel
 #define ID_MQTT "controller1"
 const char *BROKER_MQTT = "m16.cloudmqtt.com"; //URL of MQTT broker
@@ -27,12 +26,12 @@ const char *mqtt_password = "V4ig-DwmZsCA";
 
 // Debug Variables
 bool blinkOrNot = true;
+int sleepTime = 10000;
 
 //Prototypes
 void initMQTT();
 void initWiFi();
 void initRTC();
-void logMQTT();
 
 void mqtt_callback(char *topic, byte *payload, unsigned int length);
 
@@ -43,7 +42,7 @@ void setup()
   // Start IO ports
   pinMode(LED_BUILTIN, OUTPUT);
   // Start RTC Module
-  initRTC();
+  //initRTC();
   //configure WiFi Connection
   initWiFi();
   //Configure MQTT
@@ -56,18 +55,21 @@ void loop()
   {
     digitalWrite(LED_BUILTIN, HIGH);
   }
-  delay(1000);
-  logMQTT();
+  MQTT.publish(TOPIC_SUBSCRIBE, "LED IS OFF");
+  delay(sleepTime);
   digitalWrite(LED_BUILTIN, LOW);
-  delay(1000);
+  MQTT.publish(TOPIC_SUBSCRIBE, "LED IS ON");
+  delay(sleepTime);
   // put your main code here, to run repeatedly:
 }
 
 void initWiFi()
 {
   Serial.println("");
-  Serial.print("       Trying to connect to: ");
-  Serial.println(ssid);
+  Serial.println("[ OK ] Starting microgreen controller");
+  Serial.println("       Trying to connect to: ");
+  Serial.print("       ");
+  Serial.print(ssid);
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
 
@@ -101,11 +103,6 @@ void initMQTT()
       delay(2000);
     }
   }
-}
-
-void logMQTT()
-{
-  MQTT.publish(TOPICO_PUBLISH, "Sent Message");
 }
 
 //Função: função de callback
@@ -155,11 +152,10 @@ void initRTC()
 
   if (strcmp(rtc.getDOWStr(), "xxxxxxxxx") == 0)
   {
-    Serial.print("[FAIL] RTC is not working, check");
+    Serial.println("[FAIL] RTC is not working, check");
   }
   else
   {
-    Serial.print("[ OK ] RTC working");
+    Serial.println("[ OK ] RTC working");
   }
 }
-
