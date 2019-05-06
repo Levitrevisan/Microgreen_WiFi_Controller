@@ -1,10 +1,11 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
-#include <PubSubClient.h> // Importa a Biblioteca PubSubClient
-#include <DS1307.h>
+#include <PubSubClient.h>
+#include "DHT.h"
 
 //MQTT definitions
 #define TOPIC_SUBSCRIBE "ledStatus"    //listen channel
+#define TOPIC_TEMPERATURE "temperature"
 #define TOPICO_PUBLISH "controllerLog" //sender channel
 #define ID_MQTT "controller1"
 const char *BROKER_MQTT = "m16.cloudmqtt.com"; //URL of MQTT broker
@@ -13,8 +14,7 @@ int BROKER_PORT = 10746;                       //MQTT Broker port
 //Global Objects and variables
 WiFiClient espClient;         // create espClient object
 PubSubClient MQTT(espClient); // create MQTT client object
-char outputState = '0';       //stores current output state (could be changed to boolean)
-DS1307 rtc(D1, D2);
+char outputState = '0';       // stores current output state (could be changed to boolean)
 
 //WiFi constants
 const char *ssid = "ImWatchingYou";
@@ -24,6 +24,9 @@ const char *password = "99194213";
 const char *mqtt_username = "paiqlirh";
 const char *mqtt_password = "V4ig-DwmZsCA";
 
+//DHT sensor definitions
+DHT dht;
+
 // Debug Variables
 bool blinkOrNot = true;
 int sleepTime = 10000;
@@ -31,7 +34,6 @@ int sleepTime = 10000;
 //Prototypes
 void initMQTT();
 void initWiFi();
-void initRTC();
 
 void mqtt_callback(char *topic, byte *payload, unsigned int length);
 
@@ -41,8 +43,10 @@ void setup()
   Serial.begin(9600);
   // Start IO ports
   pinMode(LED_BUILTIN, OUTPUT);
-  // Start RTC Module
-  //initRTC();
+
+  //set DHT on pin D1
+  dht.setup(D1);
+
   //configure WiFi Connection
   initWiFi();
   //Configure MQTT
@@ -55,12 +59,20 @@ void loop()
   {
     digitalWrite(LED_BUILTIN, HIGH);
   }
+  
+  delay(dht.getMinimumSamplingPeriod());
+  String buf;
+  buf = String(dht.getTemperature(),2);
+  char buf2[5];
+  buf.toCharArray(buf2,5);
+
+  MQTT.publish(TOPIC_TEMPERATURE,buf2);
+
   MQTT.publish(TOPIC_SUBSCRIBE, "LED IS OFF");
   delay(sleepTime);
   digitalWrite(LED_BUILTIN, LOW);
   MQTT.publish(TOPIC_SUBSCRIBE, "LED IS ON");
   delay(sleepTime);
-  // put your main code here, to run repeatedly:
 }
 
 void initWiFi()
@@ -137,25 +149,5 @@ void mqtt_callback(char *topic, byte *payload, unsigned int length)
   {
     blinkOrNot = false;
     delay(5000);
-  }
-}
-
-void initRTC()
-{
-  rtc.halt(false);
-  rtc.setDOW(FRIDAY);
-  rtc.setTime(10, 40, 0);
-  rtc.setDate(17, 04, 2019);
-  //Definitions of SQW/Out pin
-  rtc.setSQWRate(SQW_RATE_1);
-  rtc.enableSQW(true);
-
-  if (strcmp(rtc.getDOWStr(), "xxxxxxxxx") == 0)
-  {
-    Serial.println("[FAIL] RTC is not working, check");
-  }
-  else
-  {
-    Serial.println("[ OK ] RTC working");
   }
 }
