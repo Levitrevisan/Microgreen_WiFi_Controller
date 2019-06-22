@@ -2,6 +2,7 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 #include "DHT.h"
+#include "credentials.h"
 
 //MQTT definitions
 #define TOPIC_SUBSCRIBE "ledStatus"    //listen channel
@@ -17,12 +18,12 @@ PubSubClient MQTT(espClient); // create MQTT client object
 char outputState = '0';       // stores current output state (could be changed to boolean)
 
 //WiFi constants
-const char *ssid = "ImWatchingYou";
-const char *password = "99194213";
+const char *ssid = wifiSSID;
+const char *password = wifiPassword;
 
 //MQTT constants
-const char *mqtt_username = "paiqlirh";
-const char *mqtt_password = "V4ig-DwmZsCA";
+const char *mqtt_username = MQTTUsername;
+const char *mqtt_password = MQTTPassword;
 
 //DHT sensor definitions
 DHT dht;
