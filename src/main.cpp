@@ -5,7 +5,7 @@
 #include "credentials.h"
 
 //MQTT definitions
-#define TOPIC_SUBSCRIBE "ledStatus"    //listen channel
+#define TOPIC_SUBSCRIBE "ledStatus" //listen channel
 #define TOPIC_TEMPERATURE "temperature"
 #define TOPICO_PUBLISH "controllerLog" //sender channel
 #define ID_MQTT "controller1"
@@ -35,7 +35,7 @@ int sleepTime = 10000;
 //Prototypes
 void initMQTT();
 void initWiFi();
-
+void MQTTreconnect();
 void mqtt_callback(char *topic, byte *payload, unsigned int length);
 
 void setup()
@@ -56,23 +56,17 @@ void setup()
 
 void loop()
 {
-  if (blinkOrNot)
-  {
-    digitalWrite(LED_BUILTIN, HIGH);
-  }
-  
+
   delay(dht.getMinimumSamplingPeriod());
   String buf;
-  buf = String(dht.getTemperature(),2);
+  buf = String(dht.getTemperature(), 2);
   char buf2[5];
-  buf.toCharArray(buf2,5);
-
-  MQTT.publish(TOPIC_TEMPERATURE,buf2);
-
-  MQTT.publish(TOPIC_SUBSCRIBE, "LED IS OFF");
-  delay(sleepTime);
-  digitalWrite(LED_BUILTIN, LOW);
-  MQTT.publish(TOPIC_SUBSCRIBE, "LED IS ON");
+  buf.toCharArray(buf2, 5);
+  if (!MQTT.connected())
+  {
+    MQTTreconnect();
+  }
+  MQTT.publish(TOPIC_TEMPERATURE, buf2);
   delay(sleepTime);
 }
 
@@ -105,7 +99,28 @@ void initMQTT()
   {
     if (MQTT.connect(ID_MQTT, mqtt_username, mqtt_password))
     {
+      MQTT.subscribe("ledStatus");
       Serial.println("[ OK ] MQTT conection estabilished");
+    }
+    else
+    {
+      Serial.print("");
+      Serial.print("[FAIL] MQTT connection error : ");
+      Serial.print(MQTT.state());
+      Serial.println("");
+      delay(2000);
+    }
+  }
+}
+
+void MQTTreconnect()
+{
+  while (!MQTT.connected())
+  {
+    if (MQTT.connect(ID_MQTT, mqtt_username, mqtt_password))
+    {
+      MQTT.subscribe("ledStatus");
+      Serial.println("[ OK ] MQTT reconnected");
     }
     else
     {
@@ -140,15 +155,17 @@ void mqtt_callback(char *topic, byte *payload, unsigned int length)
 
   //IMPORTANTE: o Led já contido na placa é acionado com lógica invertida (ou seja,
   //enviar HIGH para o output faz o Led apagar / enviar LOW faz o Led acender)
-  if (msg.equals("L"))
+  if (strcmp(topic, "ledStatus") == 0)
   {
-    blinkOrNot = true;
-    delay(5000);
-  }
+    Serial.println("LED STATUS TOPIC");
+    if (msg.equals("L"))
+    {
+      digitalWrite(LED_BUILTIN, 1);
+    }
 
-  if (msg.equals("D"))
-  {
-    blinkOrNot = false;
-    delay(5000);
+    if (msg.equals("D"))
+    {
+      digitalWrite(LED_BUILTIN, 0);
+    }
   }
 }
